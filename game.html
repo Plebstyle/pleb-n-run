@@ -7,7 +7,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#06000E;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Trebuchet MS','Segoe UI',sans-serif;overflow:hidden;touch-action:none}
-#wrap{position:relative;width:min(900px,100vw);aspect-ratio:16/9}
+#wrap{position:relative;width:min(1100px,100vw);aspect-ratio:16/9}
 canvas{display:block;width:100%;height:100%;border-radius:6px}
 #hud{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;pointer-events:none;z-index:10}
 .hp{background:rgba(8,4,18,.78);backdrop-filter:blur(4px);border:1px solid rgba(247,147,26,.5);border-radius:22px;padding:7px 18px;font-size:clamp(13px,2.2vw,18px);color:#F7931A;font-weight:bold;letter-spacing:.5px;box-shadow:0 2px 12px rgba(0,0,0,.4)}
@@ -16,8 +16,14 @@ canvas{display:block;width:100%;height:100%;border-radius:6px}
 .br{display:flex;gap:10px;pointer-events:all}
 .mb{width:clamp(48px,8vw,62px);height:clamp(48px,8vw,62px);background:radial-gradient(circle at 35% 30%,rgba(247,147,26,.35),rgba(247,147,26,.12));border:2px solid rgba(247,147,26,.7);border-radius:50%;color:#F7931A;font-size:clamp(17px,3vw,24px);display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;box-shadow:0 3px 14px rgba(0,0,0,.5)}
 .mb.on{background:radial-gradient(circle at 35% 30%,rgba(247,147,26,.7),rgba(247,147,26,.35));transform:scale(.94)}
-@media(pointer:coarse),(max-width:700px){#mob{display:flex}}
-#ov{position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(20,8,2,.85),rgba(2,0,6,.96));display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:30;gap:13px;padding:24px}
+/* No mobile play: touch buttons are never shown. On real touch devices a "desktop only" notice is shown instead. */
+#deskonly{position:absolute;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:26px;background:radial-gradient(circle at 50% 40%,#160a04,#050009 75%);border-radius:6px}
+#deskonly .em{font-size:clamp(40px,12vw,64px);line-height:1}
+#deskonly h2{color:#F7931A;font-size:clamp(20px,6vw,30px);letter-spacing:1px;text-shadow:0 0 20px rgba(247,147,26,.6);margin:0}
+#deskonly p{color:#dcdce4;font-size:clamp(12px,3.6vw,15px);line-height:1.5;margin:3px 0;max-width:420px}
+#deskonly p b{color:#F7931A}
+@media(pointer:coarse) and (hover:none){#deskonly{display:flex}}   /* real touch devices (phone/tablet) → show the "play on PC" notice, hide the game */
+#ov{position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(20,8,2,.85),rgba(2,0,6,.96));display:flex;flex-direction:column;align-items:center;justify-content:safe center;z-index:30;gap:13px;padding:24px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 #ov h1{font-size:clamp(22px,4.4vw,38px);color:#F7931A;text-align:center;line-height:1.25;text-shadow:0 0 30px rgba(247,147,26,.85),0 0 8px rgba(247,147,26,.6);letter-spacing:1px}
 #ov .sub{font-size:clamp(11px,1.9vw,15px);color:#cdcdd5;text-align:center;max-width:400px;line-height:1.7}
 #ov .sub b{color:#F7931A}
@@ -70,27 +76,36 @@ canvas{display:block;width:100%;height:100%;border-radius:6px}
 #langbar .langb.active{background:linear-gradient(135deg,#FFB844,#F7931A);color:#1a0a00;border-color:#F7931A}
 /* leaderboard */
 #lb:empty{display:none}
-#lb .lbbox{margin-top:14px;border:1px solid rgba(247,147,26,.4);background:rgba(0,0,0,.28);border-radius:14px;padding:14px 18px;max-width:440px;width:min(92vw,440px);text-align:center}
-#lb .lbtitle{color:#F7931A;font-weight:800;letter-spacing:2px;font-size:clamp(13px,2.2vw,17px)}
-#lb .lbyour{color:#cdcdd5;font-size:clamp(11px,1.8vw,14px);margin:6px 0 9px}
-#lb .lbyour b{color:#FFB84A}
-#lb .lbin{display:block;width:100%;margin:6px 0;padding:9px 12px;font-family:inherit;font-size:14px;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:9px;outline:none}
-#lb .lbin:focus{border-color:#F7931A;background:rgba(247,147,26,.1)}
-#lb .lbconsent{display:flex;align-items:flex-start;gap:7px;text-align:left;font-size:clamp(9px,1.4vw,11px);color:#9a9aa6;line-height:1.4;margin:8px 2px 4px;cursor:pointer}
-#lb .lbconsent input{margin-top:2px;flex:0 0 auto;width:15px;height:15px;accent-color:#F7931A;cursor:pointer}
-#lb .lbbtn{margin-top:9px;width:100%;background:linear-gradient(135deg,#FFB844,#F7931A);color:#1a0a00;border:none;padding:10px;font-family:inherit;font-weight:800;letter-spacing:1px;border-radius:10px;cursor:pointer;font-size:14px}
-#lb .lbbtn:hover{filter:brightness(1.07)}
-#lb .lbstatus{min-height:16px;margin-top:6px;font-size:12px;color:#FF6B6B}
-#lb .lbdone{color:#27D866;font-size:clamp(11px,1.8vw,14px);margin:6px 0 9px;line-height:1.5}
-#lb .lbsub{color:#7a7a88;font-size:clamp(9px,1.4vw,11px);margin:9px 0 6px;letter-spacing:.5px}
-#lb .lblist{list-style:none;margin:0;padding:0;max-height:210px;overflow-y:auto}
-#lb .lblist li{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:7px;font-size:clamp(11px,1.7vw,13px)}
-#lb .lblist li:nth-child(odd){background:rgba(255,255,255,.04)}
-#lb .lblist li:nth-child(1){background:rgba(247,147,26,.16)}
-#lb .lbrank{width:22px;text-align:right;color:#F7931A;font-weight:800}
-#lb .lbalias{flex:1;text-align:left;color:#e9e9ef;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#lb .lbscore{color:#FFB84A;font-weight:700;font-variant-numeric:tabular-nums}
-#lb .lbempty,#lb .lbloading{justify-content:center;color:#7a7a88;font-style:italic}
+#ov .lbbox{margin-top:14px;border:1px solid rgba(247,147,26,.4);background:rgba(0,0,0,.28);border-radius:14px;padding:14px 18px;max-width:440px;width:min(92vw,440px);text-align:center}
+#ov .lbtitle{color:#F7931A;font-weight:800;letter-spacing:2px;font-size:clamp(13px,2.2vw,17px)}
+#ov .lbyour{color:#cdcdd5;font-size:clamp(11px,1.8vw,14px);margin:6px 0 9px}
+#ov .lbyour b{color:#FFB84A}
+#ov .lbin{display:block;width:100%;margin:6px 0;padding:9px 12px;font-family:inherit;font-size:14px;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:9px;outline:none}
+#ov .lbin:focus{border-color:#F7931A;background:rgba(247,147,26,.1)}
+#ov .lbconsent{display:flex;align-items:flex-start;gap:7px;text-align:left;font-size:clamp(9px,1.4vw,11px);color:#9a9aa6;line-height:1.4;margin:8px 2px 4px;cursor:pointer}
+#ov .lbconsent input{margin-top:2px;flex:0 0 auto;width:15px;height:15px;accent-color:#F7931A;cursor:pointer}
+#ov .lbbtn{margin-top:9px;width:100%;background:linear-gradient(135deg,#FFB844,#F7931A);color:#1a0a00;border:none;padding:10px;font-family:inherit;font-weight:800;letter-spacing:1px;border-radius:10px;cursor:pointer;font-size:14px}
+#ov .lbbtn:hover{filter:brightness(1.07)}
+#ov .lbstatus{min-height:16px;margin-top:6px;font-size:12px;color:#FF6B6B}
+#ov .lbdone{color:#27D866;font-size:clamp(11px,1.8vw,14px);margin:6px 0 9px;line-height:1.5}
+#ov .lbsub{color:#7a7a88;font-size:clamp(9px,1.4vw,11px);margin:9px 0 6px;letter-spacing:.5px}
+#ov .lblist{list-style:none;margin:0;padding:0;max-height:210px;overflow-y:auto}
+#ov .lblist li{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:7px;font-size:clamp(11px,1.7vw,13px)}
+#ov .lblist li:nth-child(odd){background:rgba(255,255,255,.04)}
+#ov .lblist li:nth-child(1){background:rgba(247,147,26,.16)}
+#ov .lbrank{width:22px;text-align:right;color:#F7931A;font-weight:800}
+#ov .lbalias{flex:1;text-align:left;color:#e9e9ef;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ov .lbscore{color:#FFB84A;font-weight:700;font-variant-numeric:tabular-nums}
+#ov .lbempty,#ov .lbloading{justify-content:center;color:#7a7a88;font-style:italic}
+#ov .lbback{display:inline-block;margin-top:12px;color:#9a9aa6;text-decoration:none;font-size:12px}
+#ov .lbback:hover{color:#fff}
+/* end screen: result (left) + leaderboard entry (right), side by side */
+#ov .sub:has(.endcols){max-width:900px}
+.endcols{display:flex;flex-wrap:wrap;gap:22px;justify-content:center;align-items:flex-start;margin-top:6px}
+.endcols>div{flex:1 1 300px;min-width:250px;max-width:410px}
+.endcols .reward{margin-top:10px}
+.endcols .endR:empty{display:none}
+.endcols .lbbox{margin-top:0}
 </style>
 </head>
 <body>
@@ -137,6 +152,13 @@ canvas{display:block;width:100%;height:100%;border-radius:6px}
   <div id="splash">
     <div class="spres">pleb.style <span data-i18n="presents">presents</span></div>
     <img class="slogo" src="sprites/plebstyle_2.png" alt="pleb.style">
+  </div>
+  <div id="deskonly">
+    <div class="em">🖥️⌨️</div>
+    <h2>PLEB &#8217;N&#8217; RUN</h2>
+    <p><b>EN</b> &middot; Please play on a desktop or laptop — this game needs a keyboard.</p>
+    <p><b>DE</b> &middot; Bitte am PC oder Laptop spielen — das Spiel braucht eine Tastatur.</p>
+    <p><b>FR</b> &middot; À jouer sur un ordinateur — ce jeu nécessite un clavier.</p>
   </div>
 </div>
 <script>
@@ -613,13 +635,15 @@ const I18N={
     rl_locked:'Score 4,000+ points to unlock a discount code!',
     url_shop:'https://pleb.style/en', url_seedpoker:'https://pleb.style/en/products/seed-poker-seed-phrase-generator-premium-poker-deck',
     copied:'✓ copied!',
-    lb_title:'LEADERBOARD', lb_your:'Your score', lb_alias:'Alias', lb_email:'Email (private)',
+    lb_title:'LEADERBOARD', lb_your:'Your score', lb_alias:'Alias', lb_email:'Email',
     lb_consent:'I agree my email is stored to contact me if I win. It is never shown publicly.',
     lb_submit:'Enter leaderboard', lb_sending:'Sending…',
     lb_thanks:'You’re in! Top 5 win prizes — winners are notified by email.',
     lb_prizes:'Top 10 shown · Top 5 win prizes 🎁', lb_empty:'No scores yet — be the first!',
     lb_err:'Something went wrong — please try again.',
-    lb_need_alias:'Please enter an alias.', lb_need_email:'Please enter a valid email.', lb_need_consent:'Please tick the checkbox.'
+    lb_need_alias:'Please enter an alias.', lb_need_email:'Please enter a valid email.', lb_need_consent:'Please tick the checkbox.',
+    lb_enter:'Leaderboard & prizes →', lb_back:'← Back to result',
+    lb_qualify:'You reached the Top 10!', lb_notop:'not in the Top 10'
   },
   de:{
     presents:'präsentiert',
@@ -639,13 +663,15 @@ const I18N={
     rl_locked:'Erreiche 4.000+ Punkte für einen Rabattcode!',
     url_shop:'https://pleb.style', url_seedpoker:'https://pleb.style/products/seed-poker-seed-phrase-generator-premium-poker-deck',
     copied:'✓ kopiert!',
-    lb_title:'BESTENLISTE', lb_your:'Dein Score', lb_alias:'Alias', lb_email:'E-Mail (privat)',
+    lb_title:'BESTENLISTE', lb_your:'Dein Score', lb_alias:'Alias', lb_email:'E-Mail',
     lb_consent:'Ich bin einverstanden, dass meine E-Mail gespeichert wird, um mich bei Gewinn zu kontaktieren. Sie wird nie öffentlich gezeigt.',
     lb_submit:'In Bestenliste eintragen', lb_sending:'Wird gesendet…',
     lb_thanks:'Eingetragen! Top 5 gewinnen Preise — Gewinner werden per E-Mail benachrichtigt.',
     lb_prizes:'Top 10 sichtbar · Top 5 gewinnen Preise 🎁', lb_empty:'Noch keine Scores — sei die/der Erste!',
     lb_err:'Etwas ist schiefgelaufen — bitte nochmal.',
-    lb_need_alias:'Bitte einen Alias eingeben.', lb_need_email:'Bitte gültige E-Mail eingeben.', lb_need_consent:'Bitte das Häkchen setzen.'
+    lb_need_alias:'Bitte einen Alias eingeben.', lb_need_email:'Bitte gültige E-Mail eingeben.', lb_need_consent:'Bitte das Häkchen setzen.',
+    lb_enter:'Zur Bestenliste & Preisen →', lb_back:'← Zurück zum Ergebnis',
+    lb_qualify:'Du bist in den Top 10!', lb_notop:'nicht in den Top 10'
   },
   fr:{
     presents:'présente',
@@ -665,13 +691,15 @@ const I18N={
     rl_locked:'Atteins 4 000+ points pour débloquer un code !',
     url_shop:'https://pleb.style/fr', url_seedpoker:'https://pleb.style/fr/products/generateur-de-phrase-de-recuperation-amp-jeu-de-cartes-haut-de-gamme',
     copied:'✓ copié !',
-    lb_title:'CLASSEMENT', lb_your:'Ton score', lb_alias:'Pseudo', lb_email:'E-mail (privé)',
+    lb_title:'CLASSEMENT', lb_your:'Ton score', lb_alias:'Pseudo', lb_email:'E-mail',
     lb_consent:'J’accepte que mon e-mail soit stocké pour être contacté en cas de gain. Il n’est jamais affiché publiquement.',
     lb_submit:'Rejoindre le classement', lb_sending:'Envoi…',
     lb_thanks:'Enregistré ! Le top 5 gagne des prix — les gagnants sont contactés par e-mail.',
     lb_prizes:'Top 10 affiché · Top 5 gagnent des prix 🎁', lb_empty:'Aucun score — sois le premier !',
     lb_err:'Une erreur est survenue — réessaie.',
-    lb_need_alias:'Entre un pseudo.', lb_need_email:'Entre un e-mail valide.', lb_need_consent:'Coche la case.'
+    lb_need_alias:'Entre un pseudo.', lb_need_email:'Entre un e-mail valide.', lb_need_consent:'Coche la case.',
+    lb_enter:'Classement & prix →', lb_back:'← Retour au résultat',
+    lb_qualify:'Tu es dans le Top 10 !', lb_notop:'pas dans le Top 10'
   }
 };
 function t(key){ return (I18N[LANG]&&I18N[LANG][key])||I18N.en[key]||key; }
@@ -733,25 +761,30 @@ async function onLbSubmit(){
     renderLeaderboard();
   }catch(e){ st.textContent=t('lb_err'); if(btn)btn.disabled=false; }
 }
-function renderLeaderboard(){
-  const box=document.getElementById('lb'); if(!box)return;
-  if(!lbReady()){ box.innerHTML=''; return; }                 // no backend configured yet → hide entirely
+async function renderLeaderboard(){
+  const box=document.getElementById('lbcol'); if(!box)return;   // right column of the end screen
+  if(!lbReady()){ box.innerHTML=''; return; }                   // no backend configured yet → hide the column
+  box.innerHTML=`<div class="lbbox"><div class="lbtitle">🏆 ${t('lb_title')}</div><div id="lbmid" class="lbloading">…</div></div>`;
+  let rows=[];
+  try{ rows=await lbFetchTop(); }catch(e){}                      // fetched only to decide Top-10 qualification (list is shown by the widget below the game)
+  const mid=document.getElementById('lbmid'); if(!mid)return;
+  mid.className='';
   const yourScore=lastEnd?lastEnd.score:0;
-  let h=`<div class="lbbox"><div class="lbtitle">🏆 ${t('lb_title')}</div>`;
+  const qualifies = rows.length<10 || yourScore>Number(rows[rows.length-1].score);   // makes the Top 10?
   if(lbSubmitted){
-    h+=`<div class="lbdone">${t('lb_thanks')}${lbRank?` &nbsp;<b>#${lbRank}</b>`:''}</div>`;
-  } else {
-    h+=`<div class="lbyour">${t('lb_your')}: <b>${yourScore.toLocaleString()}</b></div>`
+    mid.innerHTML=`<div class="lbdone">${t('lb_thanks')}${lbRank?` &nbsp;<b>#${lbRank}</b>`:''}</div>`;
+  } else if(qualifies){
+    mid.innerHTML=`<div class="lbyour">🎉 <b style="color:#27D866">${t('lb_qualify')}</b><br>${t('lb_your')}: <b>${yourScore.toLocaleString()}</b></div>`
       +`<input id="lbAlias" class="lbin" maxlength="20" placeholder="${t('lb_alias')}" autocomplete="off">`
       +`<input id="lbEmail" class="lbin" type="email" maxlength="120" placeholder="${t('lb_email')}" autocomplete="off">`
       +`<label class="lbconsent"><input type="checkbox" id="lbConsent"><span>${t('lb_consent')}</span></label>`
       +`<button id="lbSubmit" class="lbbtn">${t('lb_submit')}</button>`
-      +`<div id="lbStatus" class="lbstatus"></div>`;
+      +`<div id="lbStatus" class="lbstatus"></div>`
+      +`<div class="lbsub">${t('lb_prizes')}</div>`;
+    const btn=mid.querySelector('#lbSubmit'); if(btn)btn.addEventListener('click',onLbSubmit);
+  } else {
+    mid.innerHTML=`<div class="lbyour">${t('lb_your')}: <b>${yourScore.toLocaleString()}</b><br><span style="color:#9a9aa6">${t('lb_notop')}</span></div>`;
   }
-  h+=`<div class="lbsub">${t('lb_prizes')}</div><ol id="lblist" class="lblist"><li class="lbloading">…</li></ol></div>`;
-  box.innerHTML=h;
-  const btn=box.querySelector('#lbSubmit'); if(btn)btn.addEventListener('click',onLbSubmit);
-  lbLoadTop();
 }
 function resetP(){ P={x:90,y:GY-70,w:46,h:70,vx:0,vy:0,gr:false,dir:1,tA:0,step:0,crT:0,punchT:0,punchHit:false,kickAir:false,idleT:0,lastH:1,pGoL:false,pGoR:false,threw:false,drinkT:0,beamY:null,beamBase:null}; }
 function doJump(){ if(P.gr){P.vy=-14;P.gr=false;SND.jump();} }
@@ -2389,7 +2422,7 @@ function showEnd(){
   let hi=0; try{ hi=parseInt(localStorage.getItem('opr_hi'))||0; }catch(e){}
   const isHi = score>hi; if(isHi){ hi=score; try{ localStorage.setItem('opr_hi',score); }catch(e){} }
   lastEnd={score,isHi,hi};
-  lbSubmitted=false; lbRank=null;   // fresh leaderboard form for each finished run
+  lbSubmitted=false; lbRank=null;   // fresh leaderboard state for each finished run
   renderEnd();
 }
 function renderEnd(){
@@ -2415,18 +2448,17 @@ function renderEnd(){
     +`<br><span class="code" data-code="TwentyOne21" onclick="copyCode(this)">TwentyOne21</span>`
     +`<span class="fine">${t('rl_fine')}</span>`
     +`<a href="${SHOP}" target="_blank" rel="noopener">${t('rl_link')}</a></div>`;
-  if(gs==='win'){
-    ov.querySelector('h1').innerHTML='&#9889; BITCOIN FIXES THIS &#9889;';
-    ov.querySelector('.sub').innerHTML=`${t('win_msg')}<br>${stats}${winReward}`;
-    document.getElementById('gobtn').textContent=t('play_again');
-  } else {
-    ov.querySelector('h1').innerHTML='&#128128; REKT — HFSP &#128128;';
-    const loseBlock = score>=4000 ? loseReward : `<div class="reward"><span class="fine">${t('rl_locked')}</span></div>`;   // voucher only from 4000 pts
-    ov.querySelector('.sub').innerHTML=`${t('lose_msg')}<br>${stats}${loseBlock}`;
-    document.getElementById('gobtn').textContent=t('try_again');
-  }
-  renderLeaderboard();   // competition score submit + Top 10 (only if a Supabase backend is configured)
+  const hint=ov.querySelector('.hint'); if(hint)hint.style.display='none';   // controls hint is start-screen only
+  const win=(gs==='win');
+  document.getElementById('gobtn').textContent=win?t('play_again'):t('try_again');
+  ov.querySelector('h1').innerHTML=win?'&#9889; BITCOIN FIXES THIS &#9889;':'&#128128; REKT — HFSP &#128128;';
+  const reward = win ? winReward : (score>=4000 ? loseReward : `<div class="reward"><span class="fine">${t('rl_locked')}</span></div>`);
+  ov.querySelector('.sub').innerHTML=`<div class="endcols">`
+    +`<div class="endL">${win?t('win_msg'):t('lose_msg')}<br>${stats}${reward}</div>`
+    +`<div class="endR" id="lbcol"></div></div>`;
+  renderLeaderboard();   // right column: entry form auto-appears if the score reaches the Top 10 (the Top 10 list itself lives in the separate widget below the game)
   ov.style.display='flex';
+  ov.scrollTop=0;
 }
 
 document.getElementById('gobtn').addEventListener('click',()=>{
