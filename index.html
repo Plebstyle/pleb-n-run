@@ -2407,11 +2407,25 @@ function render(){
 }
 
 // ── END SCREEN ────────────────────────────────────────────────────
+function copyFallback(text){                       // legacy copy — works in more contexts (incl. many iframes)
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=text; ta.style.position='fixed'; ta.style.top='0'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    const ok=document.execCommand('copy'); document.body.removeChild(ta); return ok;
+  }catch(e){ return false; }
+}
+function selectText(el){                            // fail-safe: highlight the code so the user can Ctrl+C manually
+  try{ const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r); }catch(e){}
+}
 function copyCode(el){
   const code=el.dataset.code||el.textContent;
-  try{ navigator.clipboard.writeText(code); }catch(e){}
-  const orig=el.textContent; el.textContent=t('copied');
-  setTimeout(()=>{ el.textContent=orig; },1200);
+  const flashOK=()=>{ el.textContent=t('copied'); setTimeout(()=>{ el.textContent=code; },1300); };
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(code).then(flashOK,()=>{ copyFallback(code)?flashOK():selectText(el); });
+  } else {
+    copyFallback(code)?flashOK():selectText(el);
+  }
 }
 let lastEnd=null;   // {score,isHi,hi} — kept so the end screen can re-render when the language changes
 function showEnd(){
