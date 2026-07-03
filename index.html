@@ -2433,8 +2433,7 @@ function renderEnd(){
   const bonus = pilled>=21 ? 2100 : 0, pillBonus = pillAmmo*210, heartBonus = lives*210;
   const stats=`${t('lbl_sats')}: <b>${sats.toLocaleString()}</b> &nbsp;·&nbsp; ${t('lbl_shitcoiners')}: <b>${pilled}</b>${bonus?' &nbsp;<b style="color:#F7931A">+21 BONUS</b>':''}`
     +`<br>🟠 ${t('lbl_pills')}: <b>${pillAmmo}</b> &nbsp;·&nbsp; ❤️ ${t('lbl_hearts')}: <b>${lives}</b>${(pillBonus+heartBonus)?` &nbsp;<b style="color:#F7931A">+${(pillBonus+heartBonus).toLocaleString()}</b>`:''}`
-    +`<br><span style="font-size:1.55em;color:#FFB84A;font-weight:800;letter-spacing:1px">SCORE ${score.toLocaleString()}</span>`
-    +`<br>${isHi?'🏆 <b style="color:#F7931A">'+t('lbl_newhi')+'</b>':t('lbl_hi')+' <b>'+hi.toLocaleString()+'</b>'}`;
+    +`<br><span style="font-size:1.55em;color:#FFB84A;font-weight:800;letter-spacing:1px">SCORE ${score.toLocaleString()}</span>`;
   const SHOP=t('url_shop'), SEEDPOKER=t('url_seedpoker');   // language-adapted shop links
   const winReward=`<div class="reward">`
     +`<div class="rtitle">${t('rw_title')}</div>`
