@@ -1,0 +1,36 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "4f1a076f-38da-41ad-9af7-a64e532f7d57",
+        "name": "pixel art character, side view,",
+        "prompt": "pixel art character, side view, full body, man wearing a bright orange hoodie with a big bold white Bitcoin \"B\" logo on the chest, orange beanie cap, blue jeans, orange sneakers, confident grin",
+        "size": {
+          "width": 124,
+          "height": 124
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-06-17T16:51:49.924578+00:00"
+      },
+      "folder": "pixel_art_character_side_view",
+      "frames": {
+        "rotations": {
+          "south": "pixel_art_character_side_view/rotations/south.png",
+          "south-east": "pixel_art_character_side_view/rotations/south-east.png",
+          "east": "pixel_art_character_side_view/rotations/east.png",
+          "north-east": "pixel_art_character_side_view/rotations/north-east.png",
+          "north": "pixel_art_character_side_view/rotations/north.png",
+          "north-west": "pixel_art_character_side_view/rotations/north-west.png",
+          "west": "pixel_art_character_side_view/rotations/west.png",
+          "south-west": "pixel_art_character_side_view/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-06-17T16:57:05.005633"
+}

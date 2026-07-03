@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pleb 'n' Run — Leaderboard</title>
+</head>
+<body style="margin:0;background:transparent">
+<!-- ==========================================================================
+     PLEB 'N' RUN — standalone leaderboard widget
+     Read-only Top 10 (alias + score). Safe to embed anywhere: it only reads
+     the public "leaderboard" view (no email, no writes).
+
+     TWO WAYS TO USE:
+     A) iframe  — host this file (e.g. GitHub Pages) and embed:
+          <iframe src="https://<you>.github.io/leaderboard.html"
+                  style="width:100%;max-width:460px;height:560px;border:0"></iframe>
+     B) Shopify — paste EVERYTHING between the two "WIDGET START/END" comments
+          into a "Custom Liquid" section on your page. No iframe needed.
+
+     Fill in SUPA_URL + SUPA_KEY below (same values as game.html).
+=========================================================================== -->
+
+<!-- ================= WIDGET START ================= -->
+<div id="pnr-leaderboard">
+  <div class="pnr-card">
+    <div class="pnr-head">
+      <span class="pnr-title">🏆 PLEB &#8217;N&#8217; RUN</span>
+      <span class="pnr-sub">LEADERBOARD</span>
+    </div>
+    <ol id="pnr-list" class="pnr-list"><li class="pnr-msg">…</li></ol>
+    <div class="pnr-foot">
+      <span id="pnr-updated"></span>
+      <a class="pnr-play" href="https://pleb.style" target="_top">PLAY&nbsp;&rarr;</a>
+    </div>
+  </div>
+</div>
+
+<style>
+#pnr-leaderboard{--o:#F7931A;--oL:#FFB84A;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;max-width:460px;margin:0 auto}
+#pnr-leaderboard *{box-sizing:border-box}
+#pnr-leaderboard .pnr-card{background:linear-gradient(160deg,#160a22,#0b0616);border:1px solid rgba(247,147,26,.4);border-radius:16px;padding:18px 18px 12px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+#pnr-leaderboard .pnr-head{text-align:center;margin-bottom:12px}
+#pnr-leaderboard .pnr-title{display:block;color:var(--o);font-weight:800;letter-spacing:1px;font-size:clamp(16px,4vw,20px);text-shadow:0 0 18px rgba(247,147,26,.5)}
+#pnr-leaderboard .pnr-sub{display:block;color:#9a9aa6;font-weight:700;letter-spacing:4px;font-size:11px;margin-top:2px}
+#pnr-leaderboard .pnr-list{list-style:none;margin:0;padding:0}
+#pnr-leaderboard .pnr-list li{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:9px;font-size:clamp(13px,3vw,15px);color:#e9e9ef}
+#pnr-leaderboard .pnr-list li:nth-child(odd){background:rgba(255,255,255,.04)}
+#pnr-leaderboard .pnr-list li:nth-child(1){background:rgba(247,147,26,.18)}
+#pnr-leaderboard .pnr-list li:nth-child(2){background:rgba(247,147,26,.10)}
+#pnr-leaderboard .pnr-list li:nth-child(3){background:rgba(247,147,26,.06)}
+#pnr-leaderboard .pnr-rank{width:26px;text-align:center;color:var(--o);font-weight:800}
+#pnr-leaderboard .pnr-alias{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+#pnr-leaderboard .pnr-score{color:var(--oL);font-weight:800;font-variant-numeric:tabular-nums}
+#pnr-leaderboard .pnr-msg{justify-content:center;color:#7a7a88;font-style:italic}
+#pnr-leaderboard .pnr-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:9px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:#6a6a78}
+#pnr-leaderboard .pnr-play{color:var(--o);text-decoration:none;font-weight:800;letter-spacing:1px;font-size:12px}
+#pnr-leaderboard .pnr-play:hover{text-decoration:underline}
+</style>
+
+<script>
+(function(){
+  // ↓↓↓ same values as in game.html ↓↓↓
+  var SUPA_URL='https://dajxeyhtisjvlnlcjjsl.supabase.co';   // Project URL (no trailing /rest/v1)
+  var SUPA_KEY='sb_publishable_O4EkuVQQE0n6IUR-BrUC7Q_Z1fB8d-g';   // publishable key (safe/public)
+  var GAME_URL='https://pleb.style';   // where "PLAY →" points
+
+  function supaHead(){
+    var h={apikey:SUPA_KEY};
+    if(/^eyJ/.test(SUPA_KEY)) h.Authorization='Bearer '+SUPA_KEY;   // legacy JWT keys need Bearer; publishable keys don't
+    return h;
+  }
+
+  var list=document.getElementById('pnr-list');
+  var play=document.querySelector('#pnr-leaderboard .pnr-play');
+  if(play&&GAME_URL) play.href=GAME_URL;
+
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});}
+
+  function load(){
+    if(!SUPA_URL||!SUPA_KEY){ list.innerHTML='<li class="pnr-msg">Leaderboard not configured yet.</li>'; return; }
+    fetch(SUPA_URL+'/rest/v1/leaderboard?select=alias,score&limit=10',
+      {headers:supaHead()})
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(rows){
+        if(!rows.length){ list.innerHTML='<li class="pnr-msg">No scores yet — be the first!</li>'; return; }
+        list.innerHTML=rows.map(function(r,i){
+          var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+          return '<li><span class="pnr-rank">'+medal+'</span>'
+               + '<span class="pnr-alias">'+esc(r.alias)+'</span>'
+               + '<span class="pnr-score">'+Number(r.score).toLocaleString()+'</span></li>';
+        }).join('');
+        var u=document.getElementById('pnr-updated');
+        if(u) u.textContent='updated '+new Date().toLocaleTimeString();
+      })
+      .catch(function(){ list.innerHTML='<li class="pnr-msg">Could not load leaderboard.</li>'; });
+  }
+  load();
+  setInterval(load, 30000);   // auto-refresh every 30s
+})();
+</script>
+<!-- ================= WIDGET END ================= -->
+
+</body>
+</html>
