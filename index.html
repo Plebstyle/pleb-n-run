@@ -64,8 +64,9 @@ canvas{display:block;width:100%;height:100%;border-radius:6px}
 #ov .reward{margin-top:14px;border:1px solid rgba(247,147,26,.5);background:rgba(247,147,26,.08);border-radius:14px;padding:13px 20px;max-width:430px;line-height:1.55;font-size:clamp(11px,1.9vw,14px);color:#e9e9ef;text-align:center}
 #ov .reward .rtitle{color:#F7931A;font-weight:800;letter-spacing:.5px;font-size:1.05em}
 #ov .reward b{color:#F7931A}
-#ov .reward .code{display:inline-block;font-family:'Consolas','Courier New',monospace;font-weight:800;letter-spacing:1px;color:#1a0a00;background:linear-gradient(135deg,#FFB844,#F7931A);padding:4px 14px;border-radius:8px;margin:6px 0 2px;cursor:pointer;user-select:all;box-shadow:0 3px 12px rgba(247,147,26,.4)}
+#ov .reward .code{display:inline-block;font-family:'Consolas','Courier New',monospace;font-weight:800;letter-spacing:2px;font-size:clamp(19px,4.6vw,28px);color:#1a0a00;background:linear-gradient(135deg,#FFC974,#F7931A);padding:9px 22px;border-radius:12px;margin:10px 0 4px;cursor:pointer;user-select:all;border:2px solid #FFE0A0;box-shadow:0 5px 20px rgba(247,147,26,.55);animation:codepulse 1.9s ease-in-out infinite}
 #ov .reward .code:hover{filter:brightness(1.08)}
+@keyframes codepulse{0%,100%{transform:scale(1);box-shadow:0 5px 20px rgba(247,147,26,.5)}50%{transform:scale(1.045);box-shadow:0 7px 28px rgba(247,147,26,.8)}}
 #ov .reward .fine{color:#9a9aa6;font-size:.85em;display:block;margin-top:4px;line-height:1.4}
 #ov .reward a{color:#FFB84A;text-decoration:none;font-weight:bold;display:inline-block;margin-top:8px}
 #ov .reward a:hover{text-decoration:underline}
