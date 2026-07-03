@@ -31,7 +31,6 @@
     <ol id="pnr-list" class="pnr-list"><li class="pnr-msg">…</li></ol>
     <div class="pnr-foot">
       <span id="pnr-updated"></span>
-      <a class="pnr-play" href="https://pleb.style" target="_top">PLAY&nbsp;&rarr;</a>
     </div>
   </div>
 </div>
@@ -53,6 +52,7 @@
 #pnr-leaderboard .pnr-alias{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
 #pnr-leaderboard .pnr-score{color:var(--oL);font-weight:800;font-variant-numeric:tabular-nums}
 #pnr-leaderboard .pnr-msg{justify-content:center;color:#7a7a88;font-style:italic}
+#pnr-leaderboard .pnr-open{opacity:.4}
 #pnr-leaderboard .pnr-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:9px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:#6a6a78}
 #pnr-leaderboard .pnr-play{color:var(--o);text-decoration:none;font-weight:800;letter-spacing:1px;font-size:12px}
 #pnr-leaderboard .pnr-play:hover{text-decoration:underline}
@@ -72,8 +72,6 @@
   }
 
   var list=document.getElementById('pnr-list');
-  var play=document.querySelector('#pnr-leaderboard .pnr-play');
-  if(play&&GAME_URL) play.href=GAME_URL;
 
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});}
 
@@ -83,13 +81,20 @@
       {headers:supaHead()})
       .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
       .then(function(rows){
-        if(!rows.length){ list.innerHTML='<li class="pnr-msg">No scores yet — be the first!</li>'; return; }
-        list.innerHTML=rows.map(function(r,i){
-          var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
-          return '<li><span class="pnr-rank">'+medal+'</span>'
-               + '<span class="pnr-alias">'+esc(r.alias)+'</span>'
-               + '<span class="pnr-score">'+Number(r.score).toLocaleString()+'</span></li>';
-        }).join('');
+        var html='';
+        for(var i=0;i<10;i++){                       // always show 10 places; empty ones as "—"
+          var r=rows[i];
+          if(r){
+            var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+            html+='<li><span class="pnr-rank">'+medal+'</span>'
+                + '<span class="pnr-alias">'+esc(r.alias)+'</span>'
+                + '<span class="pnr-score">'+Number(r.score).toLocaleString()+'</span></li>';
+          } else {
+            html+='<li class="pnr-open"><span class="pnr-rank">'+(i+1)+'</span>'
+                + '<span class="pnr-alias">—</span><span class="pnr-score">—</span></li>';
+          }
+        }
+        list.innerHTML=html;
         var u=document.getElementById('pnr-updated');
         if(u) u.textContent='updated '+new Date().toLocaleTimeString();
       })
