@@ -837,7 +837,7 @@ function meleeHit(){
   for(let i=fudB.length-1;i>=0;i--){ const b=fudB[i]; if(b.money&&aabb(hb,{x:b.x-12,y:b.y-12,w:24,h:24})){ burst(b.x,b.y,COL.green,6); spark(b.x,b.y-6,'BLOCKED',12,COL.green); fudB.splice(i,1); hit=true; SND.hitE(); } }  // punch swats thrown cash
   if(boss&&!boss.dead&&aabb(hb,boss)){
     boss.hp--;boss.hf=10;hit=true;SND.bossHit();burst(boss.x+boss.w/2,boss.y+30,COL.o,10);spark(boss.x+boss.w/2,boss.y-10,'POW! -1',15,COL.o);
-    if(boss.hp<=0){boss.dead=true;sats+=2100;SND.bossDeath();SND.voice('bossdie','Man, fuck fiat');burst(boss.x+boss.w/2,boss.y+40,COL.o,40);spark(boss.x+boss.w/2,boss.y-20,'REKT! NGMI',18,COL.o);}
+    if(boss.hp<=0){boss.dead=true;sats+=4200;SND.bossDeath();SND.voice('bossdie','Man, fuck fiat');burst(boss.x+boss.w/2,boss.y+40,COL.o,40);spark(boss.x+boss.w/2,boss.y-20,'REKT! NGMI',18,COL.o);}
     else if(boss.hp<=boss.max/2&&boss.ph===1){boss.ph=2;boss.vx=3.6;}
   }
   if(hit)shakeT=Math.max(shakeT,6);
@@ -1189,7 +1189,7 @@ function update(){
     if(boss&&!boss.dead&&aabb(pr,{x:boss.x+42,y:boss.y,w:boss.w-50,h:boss.h})){   // inset hit zone → pill flies deeper in and bursts at the head, not the front edge
       boss.hp--;boss.hf=10;SND.bossHit();burst(pp.x,pp.y,COL.o,8);
       spark(boss.x+boss.w/2,boss.y-10,'-1',15,COL.red);
-      if(boss.hp<=0){boss.dead=true;sats+=2100;SND.bossDeath();SND.voice('bossdie','Man, fuck fiat');burst(boss.x+boss.w/2,boss.y+40,COL.o,40);spark(boss.x+boss.w/2,boss.y-20,'REKT! NGMI',18,COL.o);}
+      if(boss.hp<=0){boss.dead=true;sats+=4200;SND.bossDeath();SND.voice('bossdie','Man, fuck fiat');burst(boss.x+boss.w/2,boss.y+40,COL.o,40);spark(boss.x+boss.w/2,boss.y-20,'REKT! NGMI',18,COL.o);}
       else if(boss.hp<=boss.max/2&&boss.ph===1){boss.ph=2;boss.vx=3.6;}
       return false;
     }
@@ -1290,7 +1290,7 @@ function laserBeam(){
   for(let i=fudB.length-1;i>=0;i--){ const b=fudB[i]; if(aabb(band,{x:b.x-12,y:b.y-12,w:24,h:24})){burst(b.x,b.y,COL.red,6);fudB.splice(i,1);} }
   if(boss&&!boss.dead&&aabb(band,boss)&&tick%5===0){     // melt the boss while beamed
     boss.hp--;boss.hf=8;burst(boss.x+boss.w/2,boss.y+30,COL.red,8);
-    if(boss.hp<=0){boss.dead=true;sats+=2100;SND.bossDeath();SND.voice('bossdie','Man, fuck fiat');burst(boss.x+boss.w/2,boss.y+40,COL.o,40);spark(boss.x+boss.w/2,boss.y-20,'VAPORIZED! NGMI',16,COL.red);}
+    if(boss.hp<=0){boss.dead=true;sats+=4200;SND.bossDeath();SND.voice('bossdie','Man, fuck fiat');burst(boss.x+boss.w/2,boss.y+40,COL.o,40);spark(boss.x+boss.w/2,boss.y-20,'VAPORIZED! NGMI',16,COL.red);}
     else if(boss.hp<=boss.max/2&&boss.ph===1){boss.ph=2;boss.vx=3.6;}
   }
 }
