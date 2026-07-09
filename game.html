@@ -824,7 +824,17 @@ function spawnDrones(wx){
 }
 // Close-range melee on the active frame: orange-pills enemies & hurts the boss.
 function meleeHit(){
-  const reach=P.kickAir?60:51;                      // flying kick = generous; punch = medium reach (between old 42 and 60)
+  let reach=P.kickAir?60:51;                        // flying kick = generous; punch = medium reach (between old 42 and 60)
+  // don't let punches/kicks pass THROUGH solid walls (DEBT walls + a closed boss gate) —
+  // clamp the reach at the nearest blocking wall so you can't beat enemies/boss through it.
+  const ay0=P.y+2, ay1=P.y+P.h-2, front=P.dir>0?P.x+P.w:P.x;
+  for(const w of plats){
+    if(w.t!=='w'||(w.door&&w.open))continue;        // only solid walls / CLOSED doors block; open door is passable
+    if(w.y>=ay1||w.y+w.h<=ay0)continue;             // wall must overlap the body height of the swing
+    if(P.dir>0){ if(w.x+w.w>front && w.x<front+reach) reach=Math.min(reach,Math.max(0,w.x-front)); }
+    else       { if(w.x<front && w.x+w.w>front-reach) reach=Math.min(reach,Math.max(0,front-(w.x+w.w))); }
+  }
+  if(reach<=0)return;                               // wall right in your face → the swing hits nothing
   const hb={x:P.dir>0?P.x+P.w:P.x-reach, y:P.y+2, w:reach, h:P.h-4};
   let hit=false;
   for(let i=enemies.length-1;i>=0;i--){
